@@ -40,10 +40,15 @@ namespace ChatApp.API.Repositories
 
         public List<Comment> GetAllCommentsByChat(int chatId)
         {
-            var chat = _mBDbContext.Chats.FirstOrDefault(c => c.Id == chatId);
+            List<Comment> list = new List<Comment>();
+
+            foreach(var item in (_mBDbContext.Comments.Where(x => x.Chat.Id == chatId)))
+            {
+                list.Add(item);
+            }
 
             
-            return chat.Comments.ToList();
+            return list;
             
 
             

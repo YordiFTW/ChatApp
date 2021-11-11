@@ -12,6 +12,10 @@ namespace ChatApp.Bussiness.Models
         public string Name { get; set; }
         public string Content { get; set; }
 
+        public bool Hidden { get; set; }
+
+        public int UserCount { get; set; }
+
         //public List<Comment> Comments2 {get; set;}
 
         public ICollection<Comment> Comments { get; set; }
