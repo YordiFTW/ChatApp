@@ -4,14 +4,16 @@ using ChatApp.API.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChatApp.API.Migrations
 {
     [DbContext(typeof(ChatAppDbContext))]
-    partial class ChatAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211112092331_11")]
+    partial class _11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,14 +28,8 @@ namespace ChatApp.API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ChatType")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -41,14 +37,17 @@ namespace ChatApp.API.Migrations
                     b.Property<bool>("Private")
                         .HasColumnType("bit");
 
+                    b.Property<int>("UserCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
                 });
 
-            modelBuilder.Entity("ChatApp.Bussiness.Models.Message", b =>
+            modelBuilder.Entity("ChatApp.Bussiness.Models.Comment", b =>
                 {
-                    b.Property<int>("MessageId")
+                    b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -62,29 +61,14 @@ namespace ChatApp.API.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("EmoticonLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GifLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Page")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("MessageId");
+                    b.HasKey("CommentId");
 
                     b.HasIndex("ChatId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("ChatApp.Bussiness.Models.User", b =>
@@ -285,10 +269,10 @@ namespace ChatApp.API.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ChatApp.Bussiness.Models.Message", b =>
+            modelBuilder.Entity("ChatApp.Bussiness.Models.Comment", b =>
                 {
                     b.HasOne("ChatApp.Bussiness.Models.Chat", "Chat")
-                        .WithMany("Messages")
+                        .WithMany("Comments")
                         .HasForeignKey("ChatId");
 
                     b.Navigation("Chat");
@@ -347,7 +331,7 @@ namespace ChatApp.API.Migrations
 
             modelBuilder.Entity("ChatApp.Bussiness.Models.Chat", b =>
                 {
-                    b.Navigation("Messages");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

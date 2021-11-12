@@ -23,14 +23,14 @@ namespace ChatApp.API.DbContext
             builder.Entity<User>(user => user.HasIndex(x => x.UserName).IsUnique(false));
 
             builder.Entity<Chat>()
-            .HasMany(c => c.Comments)
+            .HasMany(c => c.Messages)
             .WithOne(e => e.Chat);
         }
 
         public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
         public Microsoft.EntityFrameworkCore.DbSet<Chat> Chats { get; set; }
 
-        public Microsoft.EntityFrameworkCore.DbSet<Comment> Comments { get; set; }
+        public Microsoft.EntityFrameworkCore.DbSet<Message> Messages { get; set; }
 
         
     }

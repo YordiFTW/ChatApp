@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatApp.API.Repositories;
+using ChatApp.Bussiness.Enums;
 using ChatApp.Bussiness.Models;
 using Microsoft.AspNetCore.Mvc;
+using PagedList;
 
 namespace ChatApp.API.Controllers
 {
@@ -23,13 +25,17 @@ namespace ChatApp.API.Controllers
 
         [HttpPost]
         [Route("CreateChat/")]
-        public IActionResult CreateNewChat(string chatname)
+        public IActionResult CreateNewChat(string chatname, bool hidden)
         {
             Chat chat = new Chat();
 
             chat.Name = chatname;
 
-            Comment comment = new Comment();
+            if (hidden == false)
+                chat.Private = false;
+            else
+                chat.Private = true;
+
             
             chat.Content = "";
 
@@ -50,6 +56,18 @@ namespace ChatApp.API.Controllers
             return Ok(" chat deleted");
         }
 
+        [HttpPost]
+        [Route("TogglePrivateChat/")]
+        public IActionResult TogglePrivateChat(int chatId)
+        {
+
+            Chat chat = chatRepository.GetChatbyId(chatId);
+
+            chatRepository.TogglePrivateChat(chat);
+
+            return Ok(" chat changed");
+        }
+
         [HttpGet]
         [Route("AllChats/")]
         public IActionResult ShowAllChats()
@@ -62,17 +80,25 @@ namespace ChatApp.API.Controllers
         }
 
         [HttpGet]
-        [Route("AllComments/")]
-        public IActionResult ShowAllCommentsByChat()
+        [Route("AllMessagesByChat/")]
+        public IActionResult ShowAllMessagesByChat()
         {
             int chatId = 1;         
 
-            return Ok(chatRepository.GetAllCommentsByChat(chatId));
+            return Ok(chatRepository.GetAllMessagesByChat(chatId));
+        }
+
+        [HttpGet]
+        [Route("AllMessagesByPaging/")]
+        public IActionResult ShowAllMessagesByPaging()
+        {
+            var test = chatRepository.GetAllMessagesByPaging();
+            return Ok(test);
         }
 
         [HttpPost]
-        [Route("CommentSimple/")]
-        public IActionResult PostCommentSimple(string comment)
+        [Route("MessageSimple/")]
+        public IActionResult PostMessageSimple(string comment)
         {
 
 
@@ -86,28 +112,32 @@ namespace ChatApp.API.Controllers
         }
 
         [HttpPost]
-        [Route("CommentComplex/")]
-        public IActionResult PostCommentComplex(string comment)
+        [Route("MessageComplex/")]
+        public IActionResult PostMessageComplex(string comment)
         {
             int chatId = 5;
 
             Chat chat = chatRepository.GetChatbyId(chatId);
 
-            Comment commentmodel = new Comment();
+            Message commentmodel = new Message();
             commentmodel.Content = comment;
             commentmodel.Date = DateTime.Now;
             commentmodel.UserName = "Yordi";
+            commentmodel.Deleted = false;
+            commentmodel.EmoticonLink = "Yordi";
+            commentmodel.GifLink = "Yordi";
+            commentmodel.Type = ChatType.GeneralConversationType;
 
-           
-            if (chat.Comments == null)
+
+            if (chat.Messages == null)
             {
 
-                chat.Comments = new List<Comment>();
-                chat.Comments.Add(commentmodel);
+                chat.Messages = new List<Message>();
+                chat.Messages.Add(commentmodel);
             }
             else
             {
-                chat.Comments.Add(commentmodel);
+                chat.Messages.Add(commentmodel);
             }
 
 
@@ -116,7 +146,7 @@ namespace ChatApp.API.Controllers
 
             chatRepository.UpdateChat(chat);
 
-            return Ok(chat.Comments);
+            return Ok(comment);
         }
 
     }

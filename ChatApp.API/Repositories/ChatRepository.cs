@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ChatApp.API.DbContext;
 using ChatApp.Bussiness.Models;
+using Microsoft.AspNetCore.Mvc;
+using PagedList;
 
 namespace ChatApp.API.Repositories
 {
@@ -38,20 +40,27 @@ namespace ChatApp.API.Repositories
             return _mBDbContext.Chats;
         }
 
-        public List<Comment> GetAllCommentsByChat(int chatId)
+        public List<Message> GetAllMessagesByChat(int chatId)
         {
-            List<Comment> list = new List<Comment>();
+            List<Message> list = new List<Message>();
 
-            foreach(var item in (_mBDbContext.Comments.Where(x => x.Chat.Id == chatId)))
+            foreach(var item in (_mBDbContext.Messages.Where(x => x.Chat.Id == chatId)))
             {
                 list.Add(item);
-            }
-
-            
+            }       
             return list;
-            
+ 
+        }
 
-            
+        public List<Message> GetAllMessages()
+        {
+
+            return _mBDbContext.Messages.ToList();
+
+        }
+        public IPagedList<Message> GetAllMessagesByPaging()
+        {
+            return _mBDbContext.Messages.ToPagedList(1, 3);
         }
 
         public Chat GetChatbyId(int chatId)
@@ -64,6 +73,18 @@ namespace ChatApp.API.Repositories
             return _mBDbContext.Chats.FirstOrDefault(c => c.Name == chatName);
         }
 
+        public Chat TogglePrivateChat(Chat chat)
+        {
+            if (chat.Private == true)
+                chat.Private = false;
+            else
+                chat.Private = true;
+
+            _mBDbContext.SaveChanges();
+
+            return chat;
+        }
+
         public Chat UpdateChat(Chat chat)
         {
             var updateChat = _mBDbContext.Chats.FirstOrDefault(e => e.Id == chat.Id);
@@ -72,7 +93,7 @@ namespace ChatApp.API.Repositories
             {
                 updateChat.Name = chat.Name;
                 updateChat.Content = chat.Content;
-                updateChat.Comments = chat.Comments;
+                updateChat.Messages = chat.Messages;
 
                 _mBDbContext.SaveChanges();
 
